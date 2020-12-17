@@ -3,12 +3,12 @@ unit ScreenSource;
 interface
 
 uses
-  Windows, Classes, SysUtils, Vcl.Graphics, Vcl.Forms;
+  Windows, Classes, SysUtils, Vcl.Graphics, Vcl.Forms, System.Types;
 
 type
-  TScreenSource = class (TComponent)
+  TScreenSource = class(TComponent)
   private
-    FDeskCanvas : TCanvas;
+    FDeskCanvas: TCanvas;
     procedure do_Capture;
   private
     FBitmap: TBitmap;
@@ -23,19 +23,19 @@ type
 
     procedure Capture; virtual; abstract;
   published
-    property Bitmap : TBitmap read FBitmap;
-    property PixelFormat : TPixelFormat read GetPixelFormat write SetPixelFormat;
-    property Position : TPoint read FPosition write FPosition;
-    property Size : TSize read GetSize write SetSize;
+    property Bitmap: TBitmap read FBitmap;
+    property PixelFormat: TPixelFormat read GetPixelFormat write SetPixelFormat;
+    property Position: TPoint read FPosition write FPosition;
+    property Size: TSize read GetSize write SetSize;
   end;
 
-  TScreenSourceRegion = class (TScreenSource)
+  TScreenSourceRegion = class(TScreenSource)
   private
   public
     procedure Capture; override;
   end;
 
-  TScreenSourceMonitor = class (TScreenSource)
+  TScreenSourceMonitor = class(TScreenSource)
   private
     FMonitorNo: integer;
     procedure SetMonitorNo(const Value: integer);
@@ -43,17 +43,17 @@ type
     constructor Create(AOwner: TComponent); override;
     procedure Capture; override;
   published
-    property MonitorNo : integer read FMonitorNo write SetMonitorNo;
+    property MonitorNo: integer read FMonitorNo write SetMonitorNo;
   end;
 
-  TScreenSourceWindow = class (TScreenSource)
+  TScreenSourceWindow = class(TScreenSource)
   private
     FTargetHandle: HWND;
   public
     constructor Create(AOwner: TComponent); override;
     procedure Capture; override;
   published
-    property TargetHandle : HWND read FTargetHandle write FTargetHandle;
+    property TargetHandle: HWND read FTargetHandle write FTargetHandle;
   end;
 
 implementation
@@ -82,13 +82,13 @@ procedure TScreenSource.do_Capture;
 const
   CAPTUREBLT = $40000000;
 var
-  DC : HDC;
-  SRect, DRect : TRect;
+  DC: HDC;
+  SRect, DRect: TRect;
 begin
-  SRect := Rect(Position.X, Position.Y, Position.X+Size.cx, Position.Y+Size.cy);
+  SRect := Rect(Position.X, Position.Y, Position.X + Size.cx, Position.Y + Size.cy);
   DRect := Rect(0, 0, Size.cx, Size.cy);
 
-  DC := GetWindowDC( GetDesktopWindow );
+  DC := GetWindowDC(GetDesktopWindow);
   if DC = 0 then
     raise Exception.Create('TScreenSource.do_Capture - DC = 0');
 
@@ -168,10 +168,12 @@ end;
 
 procedure TScreenSourceWindow.Capture;
 var
-  SRect : TRect;
+  SRect: TRect;
 begin
-  if FTargetHandle = 0 then Exit;
-  if GetWindowRect(FTargetHandle, SRect) = false then Exit;
+  if FTargetHandle = 0 then
+    Exit;
+  if GetWindowRect(FTargetHandle, SRect) = false then
+    Exit;
 
   FPosition.X := SRect.Left;
   FPosition.Y := SRect.Top;
